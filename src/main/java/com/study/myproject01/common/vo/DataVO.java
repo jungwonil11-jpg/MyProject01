@@ -16,14 +16,6 @@ import lombok.NoArgsConstructor;
  *   "data": { ... }
  * }
  * </pre>
- *
- * <p>Lombok 어노테이션 설명:
- * <ul>
- *   <li>{@code @Data} — getter, setter, toString, equals, hashCode 자동 생성</li>
- *   <li>{@code @AllArgsConstructor} — 모든 필드를 받는 생성자 자동 생성</li>
- *   <li>{@code @NoArgsConstructor} — 기본 생성자(인수 없음) 자동 생성.
- *       Jackson이 JSON → 객체 역직렬화 시 기본 생성자를 필요로 하므로 반드시 존재해야 한다.</li>
- * </ul>
  */
 @Data
 @AllArgsConstructor
