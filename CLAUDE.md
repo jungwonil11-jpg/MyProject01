@@ -61,6 +61,10 @@ POST 엔드포인트는 브라우저 직접 접근 불가 — Postman 또는 Thu
 - `.claude/`, `CLAUDE.md`, `CLAUDE.local.md` 는 study에만 존재 (main에 commit 금지)
 - 싱크 흐름: `/강사싱크` → main에 강사 코드 → study에 머지
 
+upstream: https://github.com/nohssam/2026-springboot01.git
+my-branch: study
+integration-branch: main
+
 ## 사용자 컨텍스트
 
 Java 1월부터 시작한 학습자. 현재 Spring Boot(5월~) 단계. 목표는 Spring Boot 백엔드 + React 프론트엔드 풀스택.
