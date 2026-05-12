@@ -1,0 +1,70 @@
+package com.study.myproject01.config;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+
+// Configuration : 설정 클래스 (Spring boot 실행 될 때 같이 실행 된다.)
+// EnableWebSecurity : Spring Security에서 웹 보안 설정을 활성화 하는 어노테이션
+@Slf4j
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
+        log.info("securityFilterChain 시작");
+        http
+                // 1. CORS 설정 (corsConfigurationSource() 별도로 생성
+                // CORS를 설정한다는 건 ‘출처가 다른 서버 간의 리소스 공유’를 허용한다는 거죠.(서버와 클라이언트간의 출쳐가 다른다.)
+                // 서로 다른 출처일 때 리소스 요청과 응답을 차단하는 정책 (서로 다른 출처일 때 리소스 요청과 응답을 차단하는 정책)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // CSRF 보호 비활성 ( JWT 토큰 사용 시 일반적으로 비활성
+                // CSRF : 사용자가 로그인 된 상태를 악용하여, 악의적인 사이트가 사용자의 권한으로 요청을 보내도록 만드는 공격
+                //         JWT 를 사용하면 CSRF의 위헙이 없음
+                .csrf(csrf -> csrf.disable())
+                // Spring Security의 세션 관리 필터 자체가 제거
+                //.sessionManagement(sessionManagement -> sessionManagement.disable())
+                // 모듈은 살아 있음 , 세션 생성 안함, JWT 사용 시 권장
+                .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 요청별 권한 설정
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        // 허용한 URL만 통과 시킨다.
+                        // /members/로 들어오는 모든 것 허용
+                        .requestMatchers("/members/**").permitAll()
+                        //.requestMatchers("/members/login", "/members/register").permitAll()
+                        // 추가 가능
+                        .requestMatchers("/guestbook/**").permitAll()
+                        .anyRequest().authenticated());
+
+
+        return http.build();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration  corsConfiguration = new CorsConfiguration();
+
+        // 허용할 Origin Origin, 메서드, 헤더 , 인증
+        // 리액트
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
+        corsConfiguration.setAllowCredentials(true);
+
+        // URL 패턴 기반으로 CORS 설정을 관리하는 저장소 생성
+        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+
+        // 모든  URL 경로에 적용, CORS 규칙 객체
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+        return urlBasedCorsConfigurationSource;
+    }
+}

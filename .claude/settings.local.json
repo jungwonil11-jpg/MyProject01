@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mcp-server-mysql *)",
+      "Bash(npx *)",
+      "Bash(npm list *)",
+      "PowerShell(Get-Content *)",
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Get-Command *)",
+      "Skill(update-config)"
+    ]
+  }
+}
