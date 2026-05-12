@@ -65,6 +65,11 @@ upstream: https://github.com/nohssam/2026-springboot01.git
 my-branch: study
 integration-branch: main
 
+## 노션 정리 방식
+- 노션 상위 페이지: 🌿 Spring Boot (5월~)
+- 하위 페이지 구성: 주제별 (기능/개념 단위)
+- 정리 기준: 현재 구현된 코드 파일 기준
+
 ## 사용자 컨텍스트
 
 Java 1월부터 시작한 학습자. 현재 Spring Boot(5월~) 단계. 목표는 Spring Boot 백엔드 + React 프론트엔드 풀스택.
