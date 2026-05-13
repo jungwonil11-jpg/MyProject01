@@ -5,19 +5,18 @@
 
 <mapper namespace="com.study.myproject01.members.mapper.MembersMapper">
     <select id="findById" parameterType="String" resultType="MembersVO">
-        select * from members where m_id = #{m_id}
+        select * from members where m_active = 0 and m_id=#{m_id}
     </select>
 
-    <!-- refreshToken 관련 -->
-    <insert id="saveRefreshToken" parameterType="RefreshTokenVO">
-        INSERT INTO refresh_tokens (rt_user_id, rt_token)
-        VALUES (#{rt_user_id}, #{rt_token})
-    </insert>
     <delete id="deleteRefreshToken" parameterType="String">
         delete from refresh_tokens where rt_user_id = #{rt_user_id}
     </delete>
-    <select id="findRefreshToken" parameterType="String" resultType="RefreshTokenVO">
-        select * from refresh_tokens where rt_token = #{rt_token}
-    </select>
 
+    <insert id="saveRefreshToken" parameterType="RefreshTokenVO">
+        insert into refresh_tokens (rt_user_id, rt_token)
+        values(#{rt_user_id}, #{rt_token})
+    </insert>
+    <select id="findRefreshToken" parameterType="String" resultType="RefreshTokenVO">
+        select * from refresh_tokens where rt_token=#{rt_token}
+    </select>
 </mapper>

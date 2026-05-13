@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RefreshTokenVO {
-    private String rt_idx, rt_user_id, rt_token, rt_reg;
+    private String rt_idx, rt_user_id, rt_token, rt_reg ;
 }

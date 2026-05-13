@@ -15,6 +15,6 @@ public interface MembersMapper {
     void deleteRefreshToken(String id);
     // 새로 만들어진 refresh token 저장
     void saveRefreshToken(RefreshTokenVO refreshTokenVO);
-
+    // refreshToken을 받아서 DB에서 있는지 찾기
     RefreshTokenVO findRefreshToken(String refreshToken);
 }

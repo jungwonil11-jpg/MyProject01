@@ -1,8 +1,8 @@
 package com.study.myproject01.config;
 
 import com.study.myproject01.common.jwt.JwtRequestFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,13 +22,22 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
+
+    private final JwtRequestFilter jwtRequestFilter;
+
+    // 생성자에 JwtRequestFilter 를 주입
+    public SecurityConfig(JwtRequestFilter jwtRequestFilter) {
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
+
+
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
         log.info("securityFilterChain 시작");
         http
+                // 1. CORS 설정 (corsConfigurationSource() 별도로 생성
+                // CORS를 설정한다는 건 ‘출처가 다른 서버 간의 리소스 공유’를 허용한다는 거죠.(서버와 클라이언트간의 출쳐가 다른다.)
                 // 서로 다른 출처일 때 리소스 요청과 응답을 차단하는 정책 (서로 다른 출처일 때 리소스 요청과 응답을 차단하는 정책)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // CSRF 보호 비활성 ( JWT 토큰 사용 시 일반적으로 비활성
@@ -44,22 +53,23 @@ public class SecurityConfig {
                         // 허용한 URL만 통과 시킨다.
                         // /members/로 들어오는 모든 것 허용
                         //.requestMatchers("/members/**").permitAll()
-                        .requestMatchers("/members/login", "/members/register","/members/refresh", "/members/hash").permitAll()
+                        .requestMatchers("/members/login", "/members/register", "/members/refresh").permitAll()
                         // 추가 가능
                         .requestMatchers("/guestbook/**").permitAll()
                         .anyRequest().authenticated())
-                .exceptionHandling(e -> e
+                .exceptionHandling(e-> e
                         .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json;charset=UTF-8");
                             response.getWriter().write("{\"success\":false, \"message\":\"인증이 필요합니다.\"}");
                         })
                 )
-                // JWT 필터
-                // 사용자 JwtRequestFilter 를 통과한다
-                // UsernamePasswordAuthenticationFilter 앞에 등록
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
+                // JWT 필터
+                // 사용자 요청이 오면 jwtRequestFilter가 실행되어 JWT 토큰을 검증한 후
+                // 이상이 없으면 다음 필터로 진행
+                // UsernamePasswordAuthenticationFilter 보다 앞에 삽입
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
