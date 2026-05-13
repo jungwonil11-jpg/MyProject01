@@ -17,6 +17,6 @@ mybatis:
 # secret: 32바이트(32글자)
 jwt:
   secret: mysecretmy1secretmys3ecretmysecr
-  access-token-validity: 30000       #(1000 * 60 * 5)       5분
+  access-token-validity: 300000       #(1000 * 60 * 5)       5분
   refresh-token-validity: 86400000   #(1000 * 60 * 60 * 24) 1일
 

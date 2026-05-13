@@ -1,5 +1,7 @@
 package com.study.myproject01.config;
 
+import com.study.myproject01.common.jwt.JwtRequestFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -19,6 +22,16 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final JwtRequestFilter jwtRequestFilter;
+
+    // 생성자에 JwtRequestFilter 를 주입
+    public SecurityConfig(JwtRequestFilter jwtRequestFilter) {
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
+
+
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
         log.info("securityFilterChain 시작");
@@ -39,12 +52,24 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         // 허용한 URL만 통과 시킨다.
                         // /members/로 들어오는 모든 것 허용
-                        .requestMatchers("/members/**").permitAll()
-                        //.requestMatchers("/members/login", "/members/register").permitAll()
+                        //.requestMatchers("/members/**").permitAll()
+                        .requestMatchers("/members/login", "/members/register", "/members/refresh").permitAll()
                         // 추가 가능
                         .requestMatchers("/guestbook/**").permitAll()
-                        .anyRequest().authenticated());
+                        .anyRequest().authenticated())
+                .exceptionHandling(e-> e
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"success\":false, \"message\":\"인증이 필요합니다.\"}");
+                        })
+                )
 
+                // JWT 필터
+                // 사용자 요청이 오면 jwtRequestFilter가 실행되어 JWT 토큰을 검증한 후
+                // 이상이 없으면 다음 필터로 진행
+                // UsernamePasswordAuthenticationFilter 보다 앞에 삽입
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

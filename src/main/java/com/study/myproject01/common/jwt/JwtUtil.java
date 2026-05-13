@@ -1,9 +1,6 @@
 package com.study.myproject01.common.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
@@ -38,14 +35,15 @@ public class JwtUtil {
                .signWith(secretKey, SignatureAlgorithm.HS256)
                .compact();
    }
+
    // 토큰 받아서 검증해서 사용자 아이디 추출
    public String validateAndExtractuserId(String token){
        try{
-         // 넘어온 token "Bearer Token내용"
-         // Bearer 는 HTTP Authorization 헤더를 통해서 토큰 전달 방식
-         // token = token.substring(7)
-
-          // 페이로드란 토큰에 담기 실제 정보인 **클래임**을 포함하는 JSON 객체
+         // payload란 토큰에 담긴 실제 정보인 **클래임**을 포함하는 JSON 객체
+         // parseClaimsJws(token) : 내부적으로 세 가지를 동시에 처리
+         // 1. 서명 검증 => 위조된 토큰이면 JwtException 발생
+         // 2. 만료 검증 => 만료된 토큰이면 ExpiredJwtException 발생
+         // 3. payload 파싱 => 문제가 없으면 Claims 반환
            Claims claims = Jwts.parserBuilder()
                    .setSigningKey(secretKey)
                    .build()
@@ -55,47 +53,24 @@ public class JwtUtil {
            // 만들때 .setSubject(userId) 때문에 get를 사용하여 userId 를 얻어낼수 있다.
            return claims.getSubject();
 
-       } catch (JwtException | IllegalArgumentException e) {
+       }catch (ExpiredJwtException e) {
+           // 401 "token expired" 응답
+           throw e;
+       }catch (JwtException | IllegalArgumentException e) {
+           // 401 "token invalid" 응답
            throw new IllegalArgumentException("Token Error");
        }
    }
     // ID 추출
     public String validateToken(String token){
        try{
-           String userId = validateAndExtractuserId(token);
-           return userId;
-       } catch (Exception e) {
+           // String userId = validateAndExtractuserId(token);
+           // return userId;
+           return validateAndExtractuserId(token);
+       }catch (ExpiredJwtException e) {
+          throw  e;
+       }catch (Exception e) {
            return null;
        }
     }
-    
-    // 만료날짜 추출 메서드 
-    public Date extractExpiration(String token){
-       return Jwts.parserBuilder()
-               .setSigningKey(secretKey)
-               .build()
-               .parseClaimsJws(token)
-               .getBody()
-               .getExpiration();
-    }
-    
-    // 만료 확인 메서드 
-    public boolean isTokenExpired(String token){
-       // 만료시간 추출
-       Date expiration = extractExpiration(token);
-       return expiration.before(new Date()); // 현재 시간 보다 이전 이면 만료
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
