@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.study.myproject01.members.mapper.MembersMapper">
+    <select id="findById" parameterType="String" resultType="MembersVO">
+        select * from members where m_id = #{m_id}
+    </select>
+
+    <!-- refreshToken 관련 -->
+    <insert id="saveRefreshToken" parameterType="RefreshTokenVO">
+        INSERT INTO refresh_tokens (rt_user_id, rt_token)
+        VALUES (#{rt_user_id}, #{rt_token})
+    </insert>
+    <delete id="deleteRefreshToken" parameterType="String">
+        delete from refresh_tokens where rt_user_id = #{rt_user_id}
+    </delete>
+    <select id="findRefreshToken" parameterType="String" resultType="RefreshTokenVO">
+        select * from refresh_tokens where rt_token = #{rt_token}
+    </select>
+
+</mapper>
