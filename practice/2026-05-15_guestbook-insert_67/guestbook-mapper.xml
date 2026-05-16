@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.study.myproject01.guestbook.mapper.GuestBookMapper">
+   <select id="guestBookList" resultType="GuestBookVO">
+       select * from guestbook where g_active = 0
+   </select>
+    <insert id="_____" parameterType="_____">
+        insert into guestbook(_____, _____, _____, _____, _____, _____)
+        values(_____, _____, _____, _____, _____, _____)
+    </insert>
+</mapper>
