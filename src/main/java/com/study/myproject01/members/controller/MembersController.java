@@ -6,6 +6,7 @@ import com.study.myproject01.members.service.MembersService;
 import com.study.myproject01.members.vo.MembersVO;
 import com.study.myproject01.members.vo.RefreshTokenVO;
 import io.jsonwebtoken.ExpiredJwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/members")
 public class MembersController {
@@ -189,5 +191,24 @@ public class MembersController {
             dataVO.setMessage("refreshToken 오류");
         }
         return  dataVO;
+    }
+
+    // 로그아웃 : DB에서 refreshToken 삭제(accessToken은 클라이언트에서 삭제)
+    @PostMapping("/logout")
+    public DataVO getLogout(){
+        DataVO dataVO = new DataVO();
+        try{
+            String userId = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            membersService.deleteRefreshToken(userId);
+
+            dataVO.setSuccess(Boolean.TRUE);
+            dataVO.setMessage("로그아웃 성공");
+            log.info("로그아웃 성공");
+        } catch (Exception e) {
+            dataVO.setSuccess(Boolean.FALSE);
+            dataVO.setMessage("로그아웃 실패");
+            log.info("로그아웃 실패");
+        }
+        return dataVO;
     }
 }
