@@ -29,55 +29,55 @@ public class MembersController {
     @Autowired
     private MembersService membersService;
 
-    @_____ ("_____")
-    _____ _____ _____(@_____ _____ _____){
-        _____ _____ = _____ _____();
-        _____{
+    @PostMapping ("/login")
+    public DataVO getLogin(@RequestBody MembersVO mvo){
+        DataVO dataVO = new DataVO();
+        try {
             // 아이디 존재 여부 확인
-            _____ _____ = _____._____(_____._____());
+            MembersVO membersVO = membersService.findById(mvo.getM_id());
 
-            _____(_____ _____ _____){
-                _____._____(_____._____);
-                _____._____("_____");
-                _____ _____;
+            if(membersVO == null){
+                dataVO.setSuccess(Boolean.FALSE);
+                dataVO.setMessage("없는 아이디 입니다");
+                return  dataVO;
             }
             // 비밀번호 검증
-            _____(!_____._____(_____._____(),_____._____())){
-                _____._____(_____._____);
-                _____._____("_____");
-                _____ _____;
+            if (!passwordEncoder.matches(mvo.getM_pw(),membersVO.getM_pw())){
+                dataVO.setSuccess(Boolean.FALSE);
+                dataVO.setMessage("비밀번호가 틀렸습니다.");
+                return  dataVO;
             }
 
             // 토큰 생성
-            _____ _____ = _____._____(_____._____());
-            _____ _____ = _____._____(_____._____());
+            String accessToken = jwtUtil.generateAccessToken(membersVO.getM_id());
+            String refreshToken = jwtUtil.generateRefreshToken(membersVO.getM_id());
 
             // 기존 refresh token 삭제 후  새 토큰 저장 (중복 로그인 방지/ 항상 최신 토그만 유지)
-            _____._____(_____._____());
+            membersService.deleteRefreshToken(membersVO.getM_id());
 
             // 새로 만들어진 refresh token 저장
-            _____ _____ = _____ _____();
-            _____._____(_____._____());
-            _____._____(_____);
-            _____._____(_____);
+            RefreshTokenVO refreshTokenVO = new RefreshTokenVO();
+            refreshTokenVO.setRt_user_id(membersVO.getM_id());
+            refreshTokenVO.setRt_token(refreshToken);
+            membersService.saveRefreshToken(refreshTokenVO);
 
             // 클라이언트에게 보낼 정보 저장
-            _____<_____,_____> _____ = _____ _____<>();
-            _____._____("_____",_____);
-            _____._____("_____",_____);
-            _____._____("_____",_____);
+            Map<String,Object> map = new HashMap<>();
+            map.put("accessToken",accessToken);
+            map.put("refreshToken",refreshToken);
+            map.put("membersVO",membersVO);
 
             // 클라이언트에게 정보 보내기
-            _____._____(_____._____);
-            _____._____("_____");
-            _____._____(_____);
+            dataVO.setSuccess(Boolean.TRUE);
+            dataVO.setMessage("로그인 성공");
+            dataVO.setData(map);
 
-        } _____ (_____ _____) {
-            _____._____(_____._____);
-            _____._____("_____" + _____._____());
+        } catch (Exception e) {
+            dataVO.setSuccess(Boolean.FALSE);
+            dataVO.setMessage("서버 오류 : " + e.getMessage());
         }
 
-        _____ _____;
+        return  dataVO;
     }
 
     // mypage : 필터가 이미 토큰 검증 완료 -> SecurityContextHolder에서 userId 바로 꺼냄
