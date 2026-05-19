@@ -81,30 +81,26 @@ public class MembersController {
     }
 
     // mypage : 필터가 이미 토큰 검증 완료 -> SecurityContextHolder에서 userId 바로 꺼냄
-    @_____ ("_____")
-    _____ _____ _____(){
-        _____ _____ = _____ _____();
-        _____{
-            _____ _____ = (_____)_____._____()._____()._____();
+    @GetMapping("/myPage")
+    public DataVO getMyPage(){
+        DataVO dataVO = new DataVO();
+        try{
+            String userId = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-            _____ _____ = _____._____(_____);
-            _____(_____ _____ _____){
-                // [LEARN] 토큰은 유효한데 DB에 사용자 없음 = 계정 삭제됐는데 토큰 살아있음 = 이상 신호 (보안 알람)
-                _____._____("_____", _____);
-                _____._____(_____._____);
-                _____._____("없는 아이디 입니다.");
-            }_____{
-                _____._____(_____._____);
-                _____._____("마이페이지 성공");
-                _____._____(_____);
+            MembersVO mvo = membersService.findById(userId);
+            if(mvo == null){
+                dataVO.setSuccess(Boolean.FALSE);
+                dataVO.setMessage("없는 아이디 입니다.");
+            }else{
+                dataVO.setSuccess(Boolean.TRUE);
+                dataVO.setMessage("마이페이지 성공");
+                dataVO.setData(mvo);
             }
-        } _____ (_____ _____) {
-           // [LEARN] 예측 못 한 예외 — userId 컨텍스트 + 예외 객체 e 같이 박아서 추적 가능하게
-           _____._____("_____", _____);
-           _____._____(_____._____);
-           _____._____(_____._____());
+        } catch (Exception e) {
+           dataVO.setSuccess(Boolean.FALSE);
+           dataVO.setMessage(e.getMessage());
         }
-        _____ _____;
+        return dataVO;
     }
 
     // accessToken 이 만료 되어 클라이언트에서  refreshToken을 보내면 확인 후
@@ -178,21 +174,21 @@ public class MembersController {
     }
 
     // 로그아웃 : DB에서 refreshToken 삭제(accessToken은 클라이언트에서 삭제)
-    @PostMapping("/logout")
-    public DataVO getLogout(){
+    @PostMapping ("logout")
+    public DataVO getLogOut(){
         DataVO dataVO = new DataVO();
-        try{
+        try {
             String userId = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             membersService.deleteRefreshToken(userId);
 
             dataVO.setSuccess(Boolean.TRUE);
-            dataVO.setMessage("로그아웃 성공");
-            log.info("로그아웃 성공");
+            dataVO.setMessage("인증됨");
+            dataVO.setMessage("로그아웃성공");
         } catch (Exception e) {
             dataVO.setSuccess(Boolean.FALSE);
-            dataVO.setMessage("로그아웃 실패");
-            log.info("로그아웃 실패");
+            dataVO.setMessage("인증안됨");
+            dataVO.setMessage("로그아웃실패");
         }
-        return dataVO;
+        return  dataVO;
     }
 }

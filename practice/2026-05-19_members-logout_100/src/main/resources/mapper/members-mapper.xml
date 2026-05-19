@@ -8,9 +8,9 @@
         select * from members where m_active = 0 and m_id=#{m_id}
     </select>
 
-    <_____ id="_____" parameterType="_____">
-        _____ _____ _____ _____ _____ = #{_____}
-    </_____>
+    <delete id="deleteRefreshToken" parameterType="String">
+        delete from refresh_Tokens where rt_user_id = #{rt_user_id}
+    </delete>
 
     <insert id="saveRefreshToken" parameterType="RefreshTokenVO">
         insert into refresh_tokens (rt_user_id, rt_token)
