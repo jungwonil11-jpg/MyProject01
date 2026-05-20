@@ -52,13 +52,20 @@ public class MembersController {
     @PostMapping("/register")
     public DataVO getRegister(@RequestBody MembersVO mvo){
         DataVO dataVO = new DataVO();
+        // [LEARN] 회원가입 시도 기록 — 비번은 아직 평문이라 절대 로그에 박지 X
+        log.info("[LEARN] 회원가입 시도: m_id={}", mvo.getM_id());
         try{
+            // [LEARN] 평문 비번 → BCrypt 암호화. encode() 후엔 원본 복원 불가 (단방향 해시)
             mvo.setM_pw(passwordEncoder.encode(mvo.getM_pw()));
             membersService.register(mvo);
             dataVO.setSuccess(Boolean.TRUE);
             dataVO.setMessage("회원가입 성공");
+            // [LEARN] 회원가입 성공 감사 로그 — 누가 언제 가입했는지 기록
+            log.info("[LEARN] 회원가입 성공: m_id={}", mvo.getM_id());
         }catch (Exception e){
-            dataVO.setSuccess(false);
+            // [LEARN] catch 블록 = 예측 못 한 예외 (ex. DB 중복 키, 연결 오류). error 레벨 + e 같이 박아야 스택트레이스 보임
+            log.error("[LEARN] 회원가입 처리 중 예외: m_id={}", mvo.getM_id(), e);
+            dataVO.setSuccess(Boolean.FALSE);
             dataVO.setMessage("서버 오류 : " +e.getMessage());
         }
         return dataVO;
