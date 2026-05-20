@@ -5,6 +5,9 @@ import com.study.myproject01.members.vo.RefreshTokenVO;
 
 public interface MembersService {
 
+    // 회원가입
+    void register(MembersVO mvo);
+
     MembersVO findById(String id);
     MembersVO findByMember(MembersVO mvo);
 

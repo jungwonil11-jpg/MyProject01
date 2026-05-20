@@ -12,6 +12,11 @@ public class MembersServiceImpl implements MembersService {
     private MembersMapper membersMapper;
 
     @Override
+    public void register(MembersVO mvo) {
+        membersMapper.register(mvo);
+    }
+
+    @Override
     public MembersVO findById(String id) {
         return membersMapper.findById(id);
     }
