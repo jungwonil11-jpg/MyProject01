@@ -85,6 +85,29 @@ POST 엔드포인트는 브라우저 직접 접근 불가 — Postman 또는 Thu
 
 **Why:** isBlank 는 공백("   ")도 빈 것으로 잡아서 더 안전. 사용자는 본인 풀이 일관성을 위해 isBlank 통일 결정 (2026-05-19 채팅). 채점에서 둘 다 OK 로 처리해야 학습 의지 안 깎임.
 
+## /강사싱크 실행 전 필수 확인 (경고)
+
+**강사 코드는 이미 종료됨 (2026-05-20 기준).** `/강사싱크`를 실행하면 upstream 최신 코드가 main에 들어오고 study에 머지됨.
+
+### 실행 전 Claude가 반드시 경고할 것
+
+> "강사 코드가 종료된 상태입니다. `/강사싱크`를 실행하면 아래 보호 대상 코드와 충돌이 발생할 수 있습니다. 계속 진행하시겠습니까?"
+
+### 보호 대상 — study에서 직접 추가한 코드 (강사 코드에 없음)
+
+| 파일 | 보호 내용 |
+|------|-----------|
+| `members/controller/MembersController.java` | `getRegister()` 메서드 |
+| `members/service/MembersService.java` | `register(MembersVO mvo)` |
+| `members/service/MembersServiceImpl.java` | `register()` 구현 |
+| `members/mapper/MembersMapper.java` | `register(MembersVO mvo)` |
+| `resources/mapper/members-mapper.xml` | `<insert id="register">` 쿼리 |
+
+### 머지 충돌 발생 시 규칙
+
+- 위 보호 대상 코드는 **무조건 살린다** (ours 우선)
+- 강사 코드 변경분은 충돌 마커에서 확인 후 수동 판단
+
 ## 브랜치 전략
 
 | 브랜치 | 역할 | 규칙 |
