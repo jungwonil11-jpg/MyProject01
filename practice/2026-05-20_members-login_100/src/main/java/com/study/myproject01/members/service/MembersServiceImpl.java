@@ -23,7 +23,7 @@ public class MembersServiceImpl implements MembersService {
 
     @Override
     public void deleteRefreshToken(String id) {
-       membersMapper.deleteRefreshToken(id);
+        membersMapper.findRefreshToken(id);
     }
 
     @Override

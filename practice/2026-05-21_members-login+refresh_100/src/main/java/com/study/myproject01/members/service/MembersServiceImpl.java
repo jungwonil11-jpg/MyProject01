@@ -17,18 +17,18 @@ public class MembersServiceImpl implements MembersService {
     }
 
     @Override
-    public MembersVO findById(String id) {
-        return membersMapper.findById(id);
+    public MembersVO findById(String userId) {
+        return membersMapper.findById(userId);
     }
 
     @Override
-    public void deleteRefreshToken(String id) {
-       membersMapper.deleteRefreshToken(id);
+    public void deleteRefreshToken(String userId) {
+        membersMapper.deleteRefreshToken(userId);
     }
 
     @Override
-    public void saveRefreshToken(RefreshTokenVO refreshTokenVO) {
-        membersMapper.saveRefreshToken(refreshTokenVO);
+    public RefreshTokenVO saveRefreshToken(RefreshTokenVO refreshTokenVO) {
+        return membersMapper.saveRefreshToken(refreshTokenVO);
     }
 
     @Override
