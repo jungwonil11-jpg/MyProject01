@@ -7,7 +7,12 @@
       "PowerShell(Get-Content *)",
       "PowerShell(Get-ChildItem *)",
       "PowerShell(Get-Command *)",
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "Bash(gh repo *)",
+      "Bash(gh api *)",
+      "mcp__claude_ai_Notion__notion-search",
+      "mcp__claude_ai_Notion__notion-fetch",
+      "mcp__claude_ai_Notion__notion-update-page"
     ]
   }
 }

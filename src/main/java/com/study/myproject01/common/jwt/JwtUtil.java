@@ -37,7 +37,7 @@ public class JwtUtil {
    }
 
    // 토큰 받아서 검증해서 사용자 아이디 추출
-   public String validateAndExtractuserId(String token){
+   public String validateAndExtractUserId(String token){
        try{
          // payload란 토큰에 담긴 실제 정보인 **클래임**을 포함하는 JSON 객체
          // parseClaimsJws(token) : 내부적으로 세 가지를 동시에 처리
@@ -64,9 +64,9 @@ public class JwtUtil {
     // ID 추출
     public String validateToken(String token){
        try{
-           // String userId = validateAndExtractuserId(token);
+           // String userId = validateAndExtractUserId(token);
            // return userId;
-           return validateAndExtractuserId(token);
+           return validateAndExtractUserId(token);
        }catch (ExpiredJwtException e) {
           throw  e;
        }catch (Exception e) {

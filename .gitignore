@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Practice (학습 임시 백업/상태) ###
+.practice-backup/
+practice/*/.state

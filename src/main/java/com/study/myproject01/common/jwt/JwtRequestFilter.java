@@ -50,9 +50,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 // 5) 토큰 유효 => SecurityContextHolder에 인증 정보 등록
                 // SecurityContextHolder : 현재 로그인 한 사용자 정보를 애플리케이션 어디서나 꺼내 쓸수 있게 보관하는 전역 저장소
                 //                         컨틀로러/서비스에서 꺼내 사용
-                UsernamePasswordAuthenticationToken authenicationToken
+                UsernamePasswordAuthenticationToken authenticationToken
                         = new UsernamePasswordAuthenticationToken(userId, null, List.of());
-                SecurityContextHolder.getContext().setAuthentication(authenicationToken);
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }else{
                // 6) 토큰 위조,형식 오류 -> 401 반환, 컨트롤러로 진행하지 않음
                 log.error("토큰 검증 실패");
