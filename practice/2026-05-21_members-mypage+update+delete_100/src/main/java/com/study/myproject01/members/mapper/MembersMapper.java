@@ -9,11 +9,11 @@ public interface MembersMapper {
     // 회원가입
     void register(MembersVO mvo);
 
-    // 아이디로 회원 조회
-    MembersVO findById(String id);
+    // 아이디를 받아서 아이디가 있는지 확인
+    MembersVO findById(String userId);
 
     // refreshToken 삭제
-    void deleteRefreshToken(String id);
+    void deleteRefreshToken(String userId);
 
     // 새로 만들어진 refresh token 저장
     void saveRefreshToken(RefreshTokenVO refreshTokenVO);
@@ -22,8 +22,8 @@ public interface MembersMapper {
     RefreshTokenVO findRefreshToken(String refreshToken);
 
     // 회원정보 수정
-    void update(MembersVO mvo);
+    void memberUpdate(String userId);
 
     // 회원 탈퇴 (soft delete: m_active=1)
-    void delete(String userId);
+    void deleteMember(String userId);
 }

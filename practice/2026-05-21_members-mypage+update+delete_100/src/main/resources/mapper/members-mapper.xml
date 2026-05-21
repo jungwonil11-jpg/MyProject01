@@ -4,7 +4,6 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.study.myproject01.members.mapper.MembersMapper">
-    <!-- 회원가입 -->
     <insert id="register" parameterType="MembersVO">
         insert into members(m_id, m_pw, m_name, m_addr, m_email, m_phone)
         values(#{m_id}, #{m_pw}, #{m_name}, #{m_addr}, #{m_email}, #{m_phone})
@@ -17,37 +16,32 @@
         values(#{m_idx}, #{m_id}, #{m_pw}, #{m_name}, #{m_addr}, #{m_email}, #{m_phone})
     -->
 
-    <!-- 아이디로 회원 조회 -->
-    <select id="findById" parameterType="String" resultType="MembersVO">
+    <select id="findById" parameterType="userId" resultType="MembersVO">
         select * from members where m_active = 0 and m_id=#{m_id}
     </select>
 
-    <!-- refreshToken 삭제 -->
-    <delete id="deleteRefreshToken" parameterType="String">
-        delete from refresh_tokens where rt_user_id = #{rt_user_id}
-    </delete>
+    <update id="memberUpdate" parameterType="String">
+        update into members where m_id = #{m_id}
+    </update>
 
-    <!-- refreshToken 저장 -->
     <insert id="saveRefreshToken" parameterType="RefreshTokenVO">
         insert into refresh_tokens (rt_user_id, rt_token)
         values(#{rt_user_id}, #{rt_token})
     </insert>
 
-    <!-- refreshToken 으로 조회 -->
     <select id="findRefreshToken" parameterType="String" resultType="RefreshTokenVO">
         select * from refresh_tokens where rt_token=#{rt_token}
     </select>
 
-    <_____ id="_____" parameterType="_____">
-        _____ _____
-        _____ _____=#{_____}, _____=#{_____}, _____=#{_____},
+    <update id="deleteMember" parameterType="String">
+        update into
+        members _____=#{_____}, _____=#{_____}, _____=#{_____},
             _____=#{_____}, _____=#{_____}
-        _____ _____=#{_____} _____ _____=_____
-    </_____>
-
-    <!-- 회원 탈퇴 (soft delete) -->
-    <update id="delete" parameterType="String">
-        update members set m_active=1, m_active_reg=now() where m_id=#{m_id}
+        where m_id=#{m_id} and m_active=0
     </update>
+
+    <delete id="deleteRefreshToken" parameterType="String">
+        delete from refresh_tokens _____=_____, _____=_____() _____ _____=#{_____}
+    </delete>
     <!-- [ORACLE] delete: now() → sysdate -->
 </mapper>

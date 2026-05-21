@@ -4,6 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.study.myproject01.members.mapper.MembersMapper">
+    <!-- 회원가입 -->
     <insert id="register" parameterType="MembersVO">
         insert into members(m_id, m_pw, m_name, m_addr, m_email, m_phone)
         values(#{m_id}, #{m_pw}, #{m_name}, #{m_addr}, #{m_email}, #{m_phone})
@@ -16,6 +17,7 @@
         values(#{m_idx}, #{m_id}, #{m_pw}, #{m_name}, #{m_addr}, #{m_email}, #{m_phone})
     -->
 
+    <!-- 아이디로 회원 조회 -->
     <select id="findById" parameterType="String" resultType="MembersVO">
         select * from members where m_active = 0 and m_id=#{m_id}
     </select>
@@ -33,6 +35,7 @@
         _____ _____ _____ _____ _____=#{_____}
     </_____>
 
+    <!-- 회원정보 수정 -->
     <update id="update" parameterType="MembersVO">
         update members
         set m_name=#{m_name}, m_addr=#{m_addr}, m_addr2=#{m_addr2},
@@ -40,6 +43,7 @@
         where m_id=#{m_id} and m_active=0
     </update>
 
+    <!-- 회원 탈퇴 (soft delete) -->
     <update id="delete" parameterType="String">
         update members set m_active=1, m_active_reg=now() where m_id=#{m_id}
     </update>

@@ -4,6 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.study.myproject01.members.mapper.MembersMapper">
+    <!-- 회원가입 -->
     <insert id="register" parameterType="MembersVO">
         insert into members(m_id, m_pw, m_name, m_addr, m_email, m_phone)
         values(#{m_id}, #{m_pw}, #{m_name}, #{m_addr}, #{m_email}, #{m_phone})
@@ -24,11 +25,13 @@
         _____ _____ _____ _____ _____ = #{_____}
     </_____>
 
+    <!-- refreshToken 저장 -->
     <insert id="saveRefreshToken" parameterType="RefreshTokenVO">
         insert into refresh_tokens (rt_user_id, rt_token)
         values(#{rt_user_id}, #{rt_token})
     </insert>
 
+    <!-- refreshToken 으로 조회 -->
     <select id="findRefreshToken" parameterType="String" resultType="RefreshTokenVO">
         select * from refresh_tokens where rt_token=#{rt_token}
     </select>

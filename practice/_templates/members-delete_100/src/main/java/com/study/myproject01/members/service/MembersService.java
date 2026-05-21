@@ -8,6 +8,7 @@ public interface MembersService {
     // 회원가입
     void register(MembersVO mvo);
 
+    // 아이디로 회원 조회
     MembersVO findById(String id);
 
     // refreshToken 삭제

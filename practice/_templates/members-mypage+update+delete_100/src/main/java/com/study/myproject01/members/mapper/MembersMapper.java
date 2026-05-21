@@ -9,7 +9,7 @@ public interface MembersMapper {
     // 회원가입
     void register(MembersVO mvo);
 
-    // 아이디를 받아서 아이디가 있는지 확인
+    // 아이디로 회원 조회
     _____ _____(_____ _____);
 
     // refreshToken 삭제

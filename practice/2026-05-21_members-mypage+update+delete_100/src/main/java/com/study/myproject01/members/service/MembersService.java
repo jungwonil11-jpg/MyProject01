@@ -1,19 +1,17 @@
-package com.study.myproject01.members.mapper;
+package com.study.myproject01.members.service;
 
 import com.study.myproject01.members.vo.MembersVO;
 import com.study.myproject01.members.vo.RefreshTokenVO;
-import org.apache.ibatis.annotations.Mapper;
 
-@Mapper
-public interface MembersMapper {
+public interface MembersService {
+
     // 회원가입
     void register(MembersVO mvo);
 
-    // 아이디로 회원 조회
-    MembersVO findById(String id);
+    MembersVO findById(String userId);
 
     // refreshToken 삭제
-    void deleteRefreshToken(String id);
+    void deleteRefreshToken(String userId);
 
     // 새로 만들어진 refresh token 저장
     void saveRefreshToken(RefreshTokenVO refreshTokenVO);
@@ -22,8 +20,8 @@ public interface MembersMapper {
     RefreshTokenVO findRefreshToken(String refreshToken);
 
     // 회원정보 수정
-    void update(MembersVO mvo);
+    void memberUpdate(String userId);
 
     // 회원 탈퇴 (soft delete: m_active=1)
-    void delete(String userId);
+    void deleteMember(String userId);
 }
