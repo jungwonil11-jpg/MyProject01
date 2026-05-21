@@ -18,4 +18,8 @@ public interface MembersMapper {
     void saveRefreshToken(RefreshTokenVO refreshTokenVO);
     // refreshToken을 받아서 DB에서 있는지 찾기
     RefreshTokenVO findRefreshToken(String refreshToken);
+    // 회원정보 수정
+    void updateMember(MembersVO mvo);
+    // 회원 탈퇴 (soft delete: m_active=1)
+    void deleteAccount(String userId);
 }

@@ -35,4 +35,14 @@ public class MembersServiceImpl implements MembersService {
     public RefreshTokenVO findRefreshToken(String refreshToken) {
         return membersMapper.findRefreshToken(refreshToken);
     }
+
+    @Override
+    public void updateMember(MembersVO mvo) {
+        membersMapper.updateMember(mvo);
+    }
+
+    @Override
+    public void deleteAccount(String userId) {
+        membersMapper.deleteAccount(userId);
+    }
 }

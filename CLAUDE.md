@@ -85,6 +85,34 @@ POST 엔드포인트는 브라우저 직접 접근 불가 — Postman 또는 Thu
 
 **Why:** isBlank 는 공백("   ")도 빈 것으로 잡아서 더 안전. 사용자는 본인 풀이 일관성을 위해 isBlank 통일 결정 (2026-05-19 채팅). 채점에서 둘 다 OK 로 처리해야 학습 의지 안 깎임.
 
+### Oracle SQL 병기 — `[ORACLE]` 주석 컨벤션
+
+MySQL과 문법 차이가 있는 쿼리에만 Oracle 버전을 `<!-- [ORACLE] ... -->` 주석으로 병기.
+나머지 표준 SQL(SELECT, DELETE, 일반 INSERT)은 차이 없으므로 병기 X.
+
+**현재 적용 위치 (2군데):**
+
+| 파일 | 쿼리 | MySQL | Oracle |
+|------|------|-------|--------|
+| `members-mapper.xml` | `register` | `m_idx` AUTO_INCREMENT (컬럼 생략) | `<selectKey>` + `SEQUENCE.NEXTVAL FROM dual` |
+| `members-mapper.xml` | `deleteAccount` | `now()` | `sysdate` |
+| `guestbook-mapper.xml` | `guestBookInsert` | `now()` | `SYSDATE` |
+
+**`/연습` blank 룰 — `[ORACLE]` 주석 안:**
+- Oracle 특화 토큰만 blank: `NEXTVAL`, `dual`, `SYSDATE`, `selectKey` 태그 속성값(`order`, `keyProperty`, `resultType` 값)
+- 공통 SQL(INSERT 컬럼·값 목록)은 MySQL 쪽과 동일 룰 적용
+
+### `[LEARN]` 마커 주석 — 절대 삭제·수정 금지
+
+`[LEARN]` 태그가 붙은 주석·로그는 **손대지 말 것**.
+
+```java
+// [LEARN] 평문 비번 → BCrypt 암호화. encode() 후엔 원본 복원 불가 (단방향 해시)
+log.info("[LEARN] 로그인 시도: m_id={}", mvo.getM_id());
+```
+
+**Why:** study 브랜치에서만 추가한 학습 메모 (강사 코드에 없음). 원래 `/강사싱크` 충돌 시 자동 보존 목적이었으나, 강사 코드가 종료된 현재는 학습 기록 보존 목적으로 유지. Claude가 코드 정리·리팩토링 시 삭제하지 말 것.
+
 ## /강사싱크 실행 전 필수 확인 (경고)
 
 **강사 코드는 이미 종료됨 (2026-05-20 기준).** `/강사싱크`를 실행하면 upstream 최신 코드가 main에 들어오고 study에 머지됨.
