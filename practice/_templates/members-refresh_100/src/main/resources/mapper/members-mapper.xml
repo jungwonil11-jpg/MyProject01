@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.study.myproject01.members.mapper.MembersMapper">
+    <insert id="register" parameterType="MembersVO">
+        insert into members(m_id, m_pw, m_name, m_addr, m_email, m_phone)
+        values(#{m_id}, #{m_pw}, #{m_name}, #{m_addr}, #{m_email}, #{m_phone})
+    </insert>
+    <!-- [ORACLE] register: AUTO_INCREMENT 대신 SEQUENCE 사용
+        <selectKey keyProperty="m_idx" resultType="string" order="BEFORE">
+            SELECT members_seq.NEXTVAL FROM dual
+        </selectKey>
+        insert into members(m_idx, m_id, m_pw, m_name, m_addr, m_email, m_phone)
+        values(#{m_idx}, #{m_id}, #{m_pw}, #{m_name}, #{m_addr}, #{m_email}, #{m_phone})
+    -->
+
+    <select id="findById" parameterType="String" resultType="MembersVO">
+        select * from members where m_active = 0 and m_id=#{m_id}
+    </select>
+
+    <_____ id="_____" parameterType="_____">
+        _____ _____ _____ _____ _____ = #{_____}
+    </_____>
+
+    <_____ id="_____" parameterType="_____">
+        _____ _____ _____ (_____, _____)
+        _____(#{_____}, #{_____})
+    </_____>
+
+    <_____ id="_____" parameterType="_____" resultType="_____">
+        _____ _____ _____ _____ _____=#{_____}
+    </_____>
+
+    <update id="update" parameterType="MembersVO">
+        update members
+        set m_name=#{m_name}, m_addr=#{m_addr}, m_addr2=#{m_addr2},
+            m_email=#{m_email}, m_phone=#{m_phone}
+        where m_id=#{m_id} and m_active=0
+    </update>
+
+    <update id="delete" parameterType="String">
+        update members set m_active=1, m_active_reg=now() where m_id=#{m_id}
+    </update>
+    <!-- [ORACLE] delete: now() → sysdate -->
+</mapper>
