@@ -37,12 +37,12 @@ public class MembersServiceImpl implements MembersService {
     }
 
     @Override
-    public void updateMember(MembersVO mvo) {
-        membersMapper.updateMember(mvo);
+    public void update(MembersVO mvo) {
+        membersMapper.update(mvo);
     }
 
     @Override
-    public void deleteAccount(String userId) {
-        membersMapper.deleteAccount(userId);
+    public void delete(String userId) {
+        membersMapper.delete(userId);
     }
 }

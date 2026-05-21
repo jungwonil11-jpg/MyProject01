@@ -195,8 +195,31 @@ public class MembersController {
         return  dataVO;
     }
 
+    // 로그아웃: DB 의 refresh 토큰 삭제 (access 토큰은 클라이언트에서 폐기)
+    @PostMapping("/logout")
+    public DataVO getLogout(){
+        DataVO dataVO = new DataVO();
+        try{
+            // 1) SecurityContext에서 userId 추출
+            String userId = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            // 2) DB에서 refreshToken 삭제 (서버 측 인증 무효화 — accessToken은 클라이언트가 폐기)
+            membersService.deleteRefreshToken(userId);
+            // 3) 성공 응답 세팅
+            dataVO.setSuccess(Boolean.TRUE);
+            dataVO.setMessage("로그아웃 성공");
+            // [로그] 로그아웃 성공 감사 로그 — 누가 언제 로그아웃했는지 기록
+            log.info("로그아웃 성공: userId={}", userId);
+        } catch (Exception e) {
+            // [로그] catch 블록 = 예측 못 한 예외. error 레벨 + 예외 객체 e 같이 박아야 스택트레이스 보임
+            log.error("로그아웃 처리 중 예외", e);
+            dataVO.setSuccess(Boolean.FALSE);
+            dataVO.setMessage("로그아웃 실패");
+        }
+        return dataVO;
+    }
+
     // 마이페이지: JWT 필터 통과 후 SecurityContext 에서 userId 꺼내 회원 정보 조회
-    @GetMapping("/myPage")
+    @GetMapping("/mypage")
     public DataVO getMyPage(){
         DataVO dataVO = new DataVO();
         try{
@@ -225,32 +248,9 @@ public class MembersController {
         return dataVO;
     }
 
-    // 로그아웃: DB 의 refresh 토큰 삭제 (access 토큰은 클라이언트에서 폐기)
-    @PostMapping("/logout")
-    public DataVO getLogout(){
-        DataVO dataVO = new DataVO();
-        try{
-            // 1) SecurityContext에서 userId 추출
-            String userId = (String)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            // 2) DB에서 refreshToken 삭제 (서버 측 인증 무효화 — accessToken은 클라이언트가 폐기)
-            membersService.deleteRefreshToken(userId);
-            // 3) 성공 응답 세팅
-            dataVO.setSuccess(Boolean.TRUE);
-            dataVO.setMessage("로그아웃 성공");
-            // [로그] 로그아웃 성공 감사 로그 — 누가 언제 로그아웃했는지 기록
-            log.info("로그아웃 성공: userId={}", userId);
-        } catch (Exception e) {
-            // [로그] catch 블록 = 예측 못 한 예외. error 레벨 + 예외 객체 e 같이 박아야 스택트레이스 보임
-            log.error("로그아웃 처리 중 예외", e);
-            dataVO.setSuccess(Boolean.FALSE);
-            dataVO.setMessage("로그아웃 실패");
-        }
-        return dataVO;
-    }
-
     // 회원정보 수정: SecurityContext에서 userId 꺼내 VO에 세팅 후 DB update
-    @PostMapping("/updateMember")
-    public DataVO getUpdateMember(@RequestBody MembersVO mvo){
+    @PostMapping("/update")
+    public DataVO getUpdate(@RequestBody MembersVO mvo){
         DataVO dataVO = new DataVO();
         try{
             // 1) SecurityContext에서 userId 추출
@@ -260,7 +260,7 @@ public class MembersController {
             // 2) VO에 userId 세팅 (클라이언트가 id 안 보내도 서버가 토큰에서 직접 확인)
             mvo.setM_id(userId);
             // 3) DB update
-            membersService.updateMember(mvo);
+            membersService.update(mvo);
             // 4) 성공 응답 세팅
             dataVO.setSuccess(Boolean.TRUE);
             dataVO.setMessage("회원정보 수정 성공");
@@ -276,8 +276,8 @@ public class MembersController {
     }
 
     // 회원 탈퇴: refresh 토큰 삭제(인증 무효화) → soft delete (m_active=1, row 삭제 X)
-    @GetMapping("/delAccount")
-    public DataVO getDelAccount(){
+    @GetMapping("/delete")
+    public DataVO getDelete(){
         DataVO dataVO = new DataVO();
         try{
             // 1) SecurityContext에서 userId 추출
@@ -287,7 +287,7 @@ public class MembersController {
             // 2) refreshToken 삭제 (인증 무효화 먼저 — 탈퇴 도중 재접근 차단)
             membersService.deleteRefreshToken(userId);
             // 3) 회원 soft delete (m_active=1, 실제 row 삭제 X)
-            membersService.deleteAccount(userId);
+            membersService.delete(userId);
             // 4) 성공 응답 세팅
             dataVO.setSuccess(Boolean.TRUE);
             dataVO.setMessage("회원 탈퇴 성공");
