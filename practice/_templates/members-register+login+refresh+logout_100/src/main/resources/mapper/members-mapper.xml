@@ -8,12 +8,9 @@
         _____ _____ _____(_____, _____, _____, _____, _____, _____)
         _____(#{_____}, #{_____}, #{_____}, #{_____}, #{_____}, #{_____})
     </_____>
-    <!-- [ORACLE] register: AUTO_INCREMENT 대신 SEQUENCE 사용
-        <selectKey keyProperty="m_idx" resultType="string" order="BEFORE">
-            SELECT members_seq.NEXTVAL FROM dual
-        </selectKey>
+    <!-- [ORACLE] register: AUTO_INCREMENT 없음 → SEQUENCE 사용
         insert into members(m_idx, m_id, m_pw, m_name, m_addr, m_email, m_phone)
-        values(#{m_idx}, #{m_id}, #{m_pw}, #{m_name}, #{m_addr}, #{m_email}, #{m_phone})
+        values(seq_members.nextval, #{m_id}, #{m_pw}, #{m_name}, #{m_addr}, #{m_email}, #{m_phone})
     -->
 
     <_____ id="_____" parameterType="_____" resultType="_____">
