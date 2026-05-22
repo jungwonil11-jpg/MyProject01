@@ -19,7 +19,7 @@ public class GuestBookServiceImpl implements GuestBookService{
 
     @Override
     public GuestBookVO guestBookDetail(String g_idx) {
-        return null;
+        return guestBookMapper.guestBookDetail(g_idx);
     }
 
     @Override
@@ -29,11 +29,11 @@ public class GuestBookServiceImpl implements GuestBookService{
 
     @Override
     public int guestBookDelete(String g_idx) {
-        return 0;
+        return guestBookMapper.guestBookDelete(g_idx);
     }
 
     @Override
     public int guestBookUpdate(GuestBookVO gvo) {
-        return 0;
+        return guestBookMapper.guestBookUpdate(gvo);
     }
 }

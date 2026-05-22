@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/guestbook")
 public class GuestBookController {
@@ -57,7 +58,53 @@ public class GuestBookController {
     public DataVO getGuestBookDetail(@RequestBody GuestBookVO gvo){
         DataVO dataVO = new DataVO();
         try{
+            GuestBookVO detail = guestBookService.guestBookDetail(gvo.getG_idx());
+            if(detail == null){
+                dataVO.setSuccess(Boolean.FALSE);
+                dataVO.setMessage("데이터가 없습니다");
+            }else{
+                dataVO.setSuccess(Boolean.TRUE);
+                dataVO.setMessage("상세 조회 성공");
+                dataVO.setData(detail);
+            }
+        }catch (Exception e){
+            dataVO.setSuccess(Boolean.FALSE);
+            dataVO.setMessage(e.getMessage());
+        }
+        return dataVO;
+    }
 
+    @PutMapping("/update")
+    public DataVO getGuestBookUpdate(@RequestBody GuestBookVO gvo){
+        DataVO dataVO = new DataVO();
+        try{
+            int result = guestBookService.guestBookUpdate(gvo);
+            if(result == 0){
+                dataVO.setSuccess(Boolean.FALSE);
+                dataVO.setMessage("수정 실패");
+            }else{
+                dataVO.setSuccess(Boolean.TRUE);
+                dataVO.setMessage("수정 성공");
+            }
+        }catch (Exception e){
+            dataVO.setSuccess(Boolean.FALSE);
+            dataVO.setMessage(e.getMessage());
+        }
+        return dataVO;
+    }
+
+    @DeleteMapping("/delete/{g_idx}")
+    public DataVO getGuestBookDelete(@PathVariable String g_idx){
+        DataVO dataVO = new DataVO();
+        try{
+            int result = guestBookService.guestBookDelete(g_idx);
+            if(result == 0){
+                dataVO.setSuccess(Boolean.FALSE);
+                dataVO.setMessage("삭제 실패");
+            }else{
+                dataVO.setSuccess(Boolean.TRUE);
+                dataVO.setMessage("삭제 성공");
+            }
         }catch (Exception e){
             dataVO.setSuccess(Boolean.FALSE);
             dataVO.setMessage(e.getMessage());
