@@ -41,15 +41,6 @@ com.study.myproject01
 MyBatis mapper XML 파일 위치: `src/main/resources/mapper/*.xml`  
 VO 클래스는 `type-aliases-package`에 등록되어 XML에서 단순 클래스명으로 사용 가능.
 
-## 현재 구현된 엔드포인트
-
-| Method | URL | 설명 |
-|--------|-----|------|
-| GET | `/Members/Hello` | "Hello World" 반환 |
-| POST | `/Members/hi` | "Hi World" 반환 |
-
-POST 엔드포인트는 브라우저 직접 접근 불가 — Postman 또는 Thunder Client(VS Code 확장)로 테스트.
-
 ## 프로젝트 코드 컨벤션
 
 ### Boolean 래퍼 강제 (`Boolean.TRUE` / `Boolean.FALSE`)
@@ -62,8 +53,7 @@ POST 엔드포인트는 브라우저 직접 접근 불가 — Postman 또는 Thu
 ```
 
 **적용 시점 (Claude가 코드 생성·복사할 때 자동 적용):**
-- 새 학습 템플릿 만들 때 (강사 코드 베껴오면 lowercase `true`가 묻어오므로 즉시 교체)
-- `/강사싱크` 직후 study 쪽 작업에 진입할 때 (강사 원본이 `true` / `Boolean.TRUE` 섞어 씀 — study에서 통일)
+- 새 학습 템플릿 만들 때 (외부 코드 복사 시 lowercase `true` 묻어오면 즉시 교체)
 - 사용자가 직접 손으로 고친 `Boolean.TRUE`를 되돌리지 X
 
 **Why:** DataVO.success 필드가 Boolean 래퍼 타입이라 wrapper로 일관 유지. 사용자가 2026-05-18 채팅에서 통일 결정. 메모리 + CLAUDE.md 이중으로 박혀 있어 템플릿 재생성 시 누락 방지.
@@ -90,66 +80,17 @@ POST 엔드포인트는 브라우저 직접 접근 불가 — Postman 또는 Thu
 MySQL과 문법 차이가 있는 쿼리에만 Oracle 버전을 `<!-- [ORACLE] ... -->` 주석으로 병기.
 나머지 표준 SQL(SELECT, DELETE, 일반 INSERT)은 차이 없으므로 병기 X.
 
-**현재 적용 위치 (2군데):**
+**현재 적용 위치 (3군데):**
 
 | 파일 | 쿼리 | MySQL | Oracle |
 |------|------|-------|--------|
-| `members-mapper.xml` | `register` | `m_idx` AUTO_INCREMENT (컬럼 생략) | `<selectKey>` + `SEQUENCE.NEXTVAL FROM dual` |
+| `members-mapper.xml` | `register` | `m_idx` AUTO_INCREMENT (컬럼 생략) | `seq_members.nextval` 인라인 |
 | `members-mapper.xml` | `deleteAccount` | `now()` | `sysdate` |
 | `guestbook-mapper.xml` | `guestBookInsert` | `now()` | `SYSDATE` |
 
 **`/연습` blank 룰 — `[ORACLE]` 주석 안:**
-- Oracle 특화 토큰만 blank: `NEXTVAL`, `dual`, `SYSDATE`, `selectKey` 태그 속성값(`order`, `keyProperty`, `resultType` 값)
+- Oracle 특화 토큰만 blank: `nextval`, `SYSDATE`
 - 공통 SQL(INSERT 컬럼·값 목록)은 MySQL 쪽과 동일 룰 적용
-
-### `[LEARN]` 마커 주석 — 절대 삭제·수정 금지
-
-`[LEARN]` 태그가 붙은 주석·로그는 **손대지 말 것**.
-
-```java
-// [LEARN] 평문 비번 → BCrypt 암호화. encode() 후엔 원본 복원 불가 (단방향 해시)
-log.info("[LEARN] 로그인 시도: m_id={}", mvo.getM_id());
-```
-
-**Why:** study 브랜치에서만 추가한 학습 메모 (강사 코드에 없음). 원래 `/강사싱크` 충돌 시 자동 보존 목적이었으나, 강사 코드가 종료된 현재는 학습 기록 보존 목적으로 유지. Claude가 코드 정리·리팩토링 시 삭제하지 말 것.
-
-## /강사싱크 실행 전 필수 확인 (경고)
-
-**강사 코드는 이미 종료됨 (2026-05-20 기준).** `/강사싱크`를 실행하면 upstream 최신 코드가 main에 들어오고 study에 머지됨.
-
-### 실행 전 Claude가 반드시 경고할 것
-
-> "강사 코드가 종료된 상태입니다. `/강사싱크`를 실행하면 아래 보호 대상 코드와 충돌이 발생할 수 있습니다. 계속 진행하시겠습니까?"
-
-### 보호 대상 — study에서 직접 추가한 코드 (강사 코드에 없음)
-
-| 파일 | 보호 내용 |
-|------|-----------|
-| `members/controller/MembersController.java` | `getRegister()` 메서드 |
-| `members/service/MembersService.java` | `register(MembersVO mvo)` |
-| `members/service/MembersServiceImpl.java` | `register()` 구현 |
-| `members/mapper/MembersMapper.java` | `register(MembersVO mvo)` |
-| `resources/mapper/members-mapper.xml` | `<insert id="register">` 쿼리 |
-
-### 머지 충돌 발생 시 규칙
-
-- 위 보호 대상 코드는 **무조건 살린다** (ours 우선)
-- 강사 코드 변경분은 충돌 마커에서 확인 후 수동 판단
-
-## 브랜치 전략
-
-| 브랜치 | 역할 | 규칙 |
-|--------|------|------|
-| `main` | 강사 코드 미러 | 자습 작업 금지. 강사 싱크 전용. |
-| `study` | 자습 작업 공간 | 모든 자습·실습·주석 여기에. |
-
-- 매일 작업은 **`study` 브랜치**에서만 함
-- `.claude/`, `CLAUDE.md`, `CLAUDE.local.md` 는 study에만 존재 (main에 commit 금지)
-- 싱크 흐름: `/강사싱크` → main에 강사 코드 → study에 머지
-
-upstream: https://github.com/nohssam/2026-springboot01.git
-my-branch: study
-integration-branch: main
 
 ## 노션 정리 방식
 - 노션 상위 페이지: 🌿 Spring Boot (5월~)
